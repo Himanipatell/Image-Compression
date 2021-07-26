@@ -12,8 +12,9 @@ namespace Image_Compression.Controllers
        public async Task<IActionResult> ImageCompress([FromQuery] string path)
         {
             ImageCompresser imageCompresser = new ImageCompresser();
-            byte[] compressedBytes=await imageCompresser.compress(path); 
+            byte[] compressedBytes = await imageCompresser.compress(path);
             return Ok(new { compressedBytes = compressedBytes });
+            //return Ok(await imageCompresser.compress(path));
         }
     }
 }
