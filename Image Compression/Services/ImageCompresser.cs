@@ -16,55 +16,55 @@ namespace Image_Compression.Services
         static int count = 0;
         //Netvips Tiff
         //time taken approx 18s size 240B
-        //public async Task<byte[]> compress(string path)
-        //{
-        //    byte[] compressedBytes = null;
-        //    bool f = false;
-        //    try
-        //    {
-        //        count++;
-        //        string fileName = Path.GetFileName(path);
-        //        using var image = NetVips.Image.NewFromFile(path);
-        //        compressedBytes = image.TiffsaveBuffer(compression: ForeignTiffCompression.Jpeg);
-        //        NetVips.Image img = ByteToImg(compressedBytes);
-        //        String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count + fileName;
-        //        img.Tiffsave(writePath, compression: ForeignTiffCompression.Jpeg);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine("Exception occured");
-        //    }
-        //    return compressedBytes;
-        //}
+        public async Task compress(string path)
+        {
+            byte[] compressedBytes = null;
+            bool f = false;
+            try
+            {
+                count++;
+                string fileName = Path.GetFileName(path);
+                using var image = NetVips.Image.NewFromFile(path);
+                compressedBytes = image.TiffsaveBuffer(compression: ForeignTiffCompression.Jpeg);
+                NetVips.Image img = ByteToImg(compressedBytes);
+                String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count + fileName;
+                img.Tiffsave(writePath, compression: ForeignTiffCompression.Jpeg);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception occured");
+            }
+           // return compressedBytes;
+        }
 
         //ImageMagick
         //time taken aprox 8s size 240B
-            public async Task compress(string path)
-             {
-                 byte[] compressedBytes = null;
-                 bool f = false;
-                 try
-                 {
-                     
-                     string fileName = Path.GetFileName(path);
-                     var optimizer = new ImageOptimizer();
-                      optimizer.LosslessCompress(fileInfo(path));
-                     using (WebClient webClient = new WebClient())
-                     {
-                         compressedBytes = webClient.DownloadData(path);
-                     }
-                     NetVips.Image img = ByteToImg(compressedBytes);
-                count++;
-                String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count +"_"+ fileName;
-                     img.Jpegsave(writePath);
-                 }
-                 catch (Exception e)
-                 {
-                     Console.WriteLine("Exception occured");
-                 }
-                 //return compressedBytes;
-             }
-     
+        /*  public async Task compress(string path)
+           {
+               byte[] compressedBytes = null;
+               bool f = false;
+               try
+               {
+
+                   string fileName = Path.GetFileName(path);
+                   var optimizer = new ImageOptimizer();
+                    optimizer.LosslessCompress(fileInfo(path));
+                   using (WebClient webClient = new WebClient())
+                   {
+                       compressedBytes = webClient.DownloadData(path);
+                   }
+                   NetVips.Image img = ByteToImg(compressedBytes);
+              count++;
+              String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count +"_"+ fileName;
+                   img.Jpegsave(writePath);
+               }
+               catch (Exception e)
+               {
+                   Console.WriteLine("Exception occured");
+               }
+               //return compressedBytes;
+           }*/
+
 
         //Netvips Resize
 
