@@ -11,34 +11,38 @@ namespace Image_Compression.Controllers
     [Route("[controller]")]
     public class ImageController : Controller
     {
+        //For single image
         [HttpPost]
-        //  public async Task<IActionResult> ImageCompress([FromQuery] string path)
         public async Task<IActionResult> ImageCompress([FromBody] ImageModel imageobj)
         {
-            bool a = false;
-            var tasks = new List<Task>();
-            int i = 0;
+            byte[] compressedBytes = null;
+            ImageCompresser imageCompresser = new ImageCompresser();
             foreach (string path in imageobj.images)
             {
-                string s = "";
-                HttpClient httpCleint = new HttpClient();
-                HttpResponseMessage responseMessage = new HttpResponseMessage();
+                  compressedBytes=await imageCompresser.compress(path);
+            }
+
+            return Ok(new { compressedBytes=compressedBytes}); ;
+        }
+
+        //For multiple images
+        /*[HttpPost]
+        public async Task<IActionResult> ImageCompress([FromBody] ImageModel imageobj)
+        {
+            var tasks = new List<Task>();
+
+            foreach (string path in imageobj.images)
+            {
                 ImageCompresser imageCompresser = new ImageCompresser();
-                // byte[] compressedBytes =
-               
-                 Task t=  Task.Run(() =>
+                byte[] compressedBytes = null;
+                Task t = Task.Run(() =>
                     {
-                       imageCompresser.compress(path);
+                        imageCompresser.compress(path);
                     });
                 tasks.Add(t);
             }
-            //return Ok(await imageCompresser.compress(path));          
-            //Task.WaitAll();
-           // Task.WaitAny(tasks.ToArray());
             Task.WaitAll(tasks.ToArray());
             return Ok("images compressed"); ;
-            //else
-              //  return NoContent();
-        }
+        }*/
     }
 }

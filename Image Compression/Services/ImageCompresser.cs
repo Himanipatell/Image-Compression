@@ -15,56 +15,89 @@ namespace Image_Compression.Services
     {
         static int count = 0;
         //Netvips Tiff
-        //time taken approx 18s size 240B
-        public async Task compress(string path)
+
+        //For single image
+        public async Task<byte[]> compress(string path)
         {
+            byte[] originalBytes = null;
             byte[] compressedBytes = null;
             bool f = false;
             try
             {
-                count++;
                 string fileName = Path.GetFileName(path);
                 using var image = NetVips.Image.NewFromFile(path);
-                compressedBytes = image.TiffsaveBuffer(compression: ForeignTiffCompression.Jpeg);
-                NetVips.Image img = ByteToImg(compressedBytes);
-                String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count + fileName;
+                using (WebClient webClient = new WebClient())
+                {
+                    originalBytes = webClient.DownloadData(path);
+                }
+                NetVips.Image img1 = ByteToImg(originalBytes);
+                NetVips.Image img = img1.Smartcrop((int)(img1.Width * 0.8), (int)(img1.Height * 0.8), Interesting.Centre);
+                count++;
+                compressedBytes = img.TiffsaveBuffer(ForeignTiffCompression.Jpeg);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception occured");
+            }
+             return compressedBytes;
+        }
+
+        //For multiple image
+        /*public async Task compress(string path)
+        {
+            byte[] originalBytes = null;
+            bool f = false;
+            try
+            {
+                string fileName = Path.GetFileName(path);
+                using var image = NetVips.Image.NewFromFile(path);
+                using (WebClient webClient = new WebClient())
+                {
+                    originalBytes = webClient.DownloadData(path);
+                }
+                NetVips.Image img1 = ByteToImg(originalBytes);
+                NetVips.Image img = img1.Smartcrop((int)(img1.Width  * 0.8), (int)(img1.Height * 0.8), Interesting.Centre);
+                count++;
+                String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count + "_" + fileName;
                 img.Tiffsave(writePath, compression: ForeignTiffCompression.Jpeg);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception occured");
             }
-           // return compressedBytes;
-        }
+        }*/
 
         //ImageMagick
-        //time taken aprox 8s size 240B
-        /*  public async Task compress(string path)
-           {
-               byte[] compressedBytes = null;
-               bool f = false;
-               try
-               {
+        /*public async Task compress(string path)
+        {
+            byte[] compressedBytes = null;
+            bool f = false;
+            try
+            {
+                string fileName = Path.GetFileName(path);
+                var optimizer = new ImageOptimizer();
+                optimizer.LosslessCompress(fileInfo(path));
+                using (WebClient webClient = new WebClient())
+                {
+                    compressedBytes = webClient.DownloadData(path);
+                }
+                NetVips.Image img = ByteToImg(compressedBytes);
+                count++;
+                String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count + "_" + fileName;
+                img.Jpegsave(writePath);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception occured");
+            }
+            //return compressedBytes;
+        }*/
 
-                   string fileName = Path.GetFileName(path);
-                   var optimizer = new ImageOptimizer();
-                    optimizer.LosslessCompress(fileInfo(path));
-                   using (WebClient webClient = new WebClient())
-                   {
-                       compressedBytes = webClient.DownloadData(path);
-                   }
-                   NetVips.Image img = ByteToImg(compressedBytes);
-              count++;
-              String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count +"_"+ fileName;
-                   img.Jpegsave(writePath);
-               }
-               catch (Exception e)
-               {
-                   Console.WriteLine("Exception occured");
-               }
-               //return compressedBytes;
-           }*/
-
+        private NetVips.Image ByteToImg(byte[] byteArr)
+        {
+            var ms = new MemoryStream(byteArr);
+            return NetVips.Image.NewFromStream(ms);
+        }
 
         //Netvips Resize
 
@@ -131,21 +164,17 @@ namespace Image_Compression.Services
 
 
 
-        /* private byte[] ImgToByte(Image image)
-         {
-             ImageConverter imageConverter = new ImageConverter();
-             return (byte[])imageConverter.ConvertTo(image, typeof(byte[]));
-         }*/
+      /*  private byte[] ImgToByte(Netvips.Image image)
+        {
+            ImageConverter imageConverter = new ImageConverter();
+            return (byte[])imageConverter.ConvertTo(image, typeof(byte[]));
+        }*/
 
         private FileInfo fileInfo(string fileName)
         {
             FileInfo file = new FileInfo(fileName);
             return file;
         }
-        private NetVips.Image ByteToImg(byte[] byteArr)
-        {
-            var ms = new MemoryStream(byteArr);
-            return NetVips.Image.NewFromStream(ms);
-        }
+       
     }
 }
