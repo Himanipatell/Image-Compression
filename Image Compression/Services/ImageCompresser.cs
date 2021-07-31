@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using ImageMagick;
+//using ImageMagick;
 using NetVips;
 using static NetVips.Enums;
 using Image_Compression.Models;
@@ -30,10 +31,17 @@ namespace Image_Compression.Services
                 {
                     originalBytes = webClient.DownloadData(path);
                 }
+                
                 NetVips.Image img1 = ByteToImg(originalBytes);
                 NetVips.Image img = img1.Smartcrop((int)(img1.Width * 0.8), (int)(img1.Height * 0.8), Interesting.Centre);
                 count++;
-                compressedBytes = img.TiffsaveBuffer(ForeignTiffCompression.Jpeg);
+                //compressedBytes = img.JpegsaveBuffer();
+                 compressedBytes = img.TiffsaveBuffer(ForeignTiffCompression.Jpeg,bitdepth:1);             
+                
+                String writePath = "C:\\Users\\HIMANI\\Pictures\\Compress Image\\Compress\\" + count + "_" + fileName;
+
+                ByteToImg(compressedBytes).Jpegsave(writePath);
+               // img.Tiffsave(writePath, compression: ForeignTiffCompression.Jpeg);
             }
             catch (Exception e)
             {

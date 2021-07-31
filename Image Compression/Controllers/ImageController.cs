@@ -22,7 +22,7 @@ namespace Image_Compression.Controllers
                   compressedBytes=await imageCompresser.compress(path);
             }
 
-            return Ok(new { compressedBytes=compressedBytes}); ;
+            return Ok(new { compressedBytes=compressedBytes}); 
         }
 
         //For multiple images
